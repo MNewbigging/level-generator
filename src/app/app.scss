@@ -1,4 +1,15 @@
 .ui-root {
+  // So that it doesn't shove the canvas down
+  position: absolute;
+  // Full screen
+  width: 100%;
+  height: 100%;
+  // Disable events so it doesn't block canvas
+  // This means individual ui comps need to reverse this
+  pointer-events: none;
+}
+
+canvas {
   width: 100%;
   height: 100%;
 }

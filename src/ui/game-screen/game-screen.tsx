@@ -11,7 +11,11 @@ interface GameScreenProps {
 export const GameScreen: React.FC<GameScreenProps> = ({ gameState }) => {
   return (
     <div className="game-screen">
-      <Button text="Generate level" onClick={gameState.generateLevel} />
+      <Button
+        className="button"
+        text="Generate level"
+        onClick={gameState.generateLevel}
+      />
     </div>
   );
 };
