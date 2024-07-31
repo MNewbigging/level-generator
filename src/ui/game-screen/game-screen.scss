@@ -1,0 +1,9 @@
+.game-screen {
+  padding: 10px;
+
+  .button {
+    pointer-events: all;
+    user-select: none;
+    outline: none;
+  }
+}

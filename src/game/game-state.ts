@@ -3,6 +3,8 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 import { RenderPipeline } from "./render-pipeline";
 import { AssetManager } from "./asset-manager";
+import { Level, LevelGenerator } from "./level-generator";
+import { LevelVisualiser } from "./level-visualiser";
 
 export class GameState {
   private renderPipeline: RenderPipeline;
@@ -12,13 +14,16 @@ export class GameState {
   private camera = new THREE.PerspectiveCamera();
   private controls: OrbitControls;
 
+  private levelGenerator = new LevelGenerator();
+  private levelVisualiser: LevelVisualiser;
+  private currentLevel: Level;
+
   constructor(private assetManager: AssetManager) {
     this.setupCamera();
 
     this.renderPipeline = new RenderPipeline(this.scene, this.camera);
 
     this.setupLights();
-    this.setupObjects();
 
     this.controls = new OrbitControls(this.camera, this.renderPipeline.canvas);
     this.controls.enableDamping = true;
@@ -26,9 +31,20 @@ export class GameState {
 
     this.scene.background = new THREE.Color("#1680AF");
 
+    this.levelVisualiser = new LevelVisualiser(this.assetManager, this.scene);
+
+    // Generate a random level to start with
+    this.currentLevel = this.levelGenerator.createLevel();
+    this.levelVisualiser.displayLevel(this.currentLevel);
+
     // Start game
     this.update();
   }
+
+  generateLevel = () => {
+    this.currentLevel = this.levelGenerator.createLevel();
+    this.levelVisualiser.displayLevel(this.currentLevel);
+  };
 
   private setupCamera() {
     this.camera.fov = 75;
@@ -43,16 +59,6 @@ export class GameState {
     const directLight = new THREE.DirectionalLight(undefined, Math.PI);
     directLight.position.copy(new THREE.Vector3(0.75, 1, 0.75).normalize());
     this.scene.add(directLight);
-  }
-
-  private setupObjects() {
-    const blackFloor = new THREE.MeshBasicMaterial({
-      map: this.assetManager.textures.get("floor-black"),
-    });
-
-    const cube = new THREE.Mesh(new THREE.BoxGeometry(), blackFloor);
-
-    this.scene.add(cube);
   }
 
   private update = () => {
